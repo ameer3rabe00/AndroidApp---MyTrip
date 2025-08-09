@@ -25,7 +25,7 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF02F2F6),
+      color: Colors.teal, // CHANGED: From Color(0xFF02F2F6) to Colors.teal
       child: SafeArea(
         top: false, left: false, right: false,
         child: Scaffold(

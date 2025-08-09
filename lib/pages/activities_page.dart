@@ -250,6 +250,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.teal.shade50, // Changed from blue to green background
       body: activities.isEmpty
           ? Center(
               child: Column(
@@ -358,7 +359,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                       ],
                     ),
                   ),
-                  // Activities List
+                  // Activities List - FIXED: Removed the gap
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -367,8 +368,10 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                           bottomLeft: Radius.circular(12),
                           bottomRight: Radius.circular(12),
                         ),
+                        color: Colors.white, // Added white background to the container
                       ),
                       child: ListView.builder(
+                        padding: EdgeInsets.zero, // FIXED: Removed default ListView padding
                         itemCount: activities.length,
                         itemBuilder: (context, index) {
                           var activity = activities[index];
