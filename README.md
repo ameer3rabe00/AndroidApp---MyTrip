@@ -25,13 +25,19 @@ Android Studio
 
 
 
-שלבים להתקנה
+שלבים להתקנה 
 שכפול הפרויקט:
-1- git clone https://github.com/ameer3rabe00/AndroidApp---MyTrip.git
+```bash
+git clone https://github.com/ameer3rabe00/AndroidApp---MyTrip.git
+```
 התקנת תלויות:
-2-flutter pub get
+```bash
+flutter pub get
+```
 הרצת האפליקציה:
-3-flutter run
+```bash
+flutter run
+```
 
 <img width="1061" height="1352" alt="image" src="https://github.com/user-attachments/assets/59878c73-d7ab-4dea-9a14-6db2409f314b" />
 <img width="1175" height="1352" alt="image" src="https://github.com/user-attachments/assets/747e1c8d-817a-4572-a423-170c6c665d0e" />
