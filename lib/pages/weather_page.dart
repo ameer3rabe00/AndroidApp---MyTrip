@@ -201,7 +201,7 @@ class _WeatherPageState extends State<WeatherPage>
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                // Search Section
+               
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -311,7 +311,7 @@ class _WeatherPageState extends State<WeatherPage>
 
                 const SizedBox(height: 20),
 
-                // Weather Display Section
+           
                 Expanded(
                   child: _buildWeatherDisplay(),
                 ),
@@ -385,7 +385,7 @@ class _WeatherPageState extends State<WeatherPage>
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Main Weather Card
+          
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(30),
@@ -409,7 +409,7 @@ class _WeatherPageState extends State<WeatherPage>
                 ),
                 child: Column(
                   children: [
-                    // City Name
+                
                     Text(
                       cityName,
                       style: const TextStyle(
@@ -422,7 +422,7 @@ class _WeatherPageState extends State<WeatherPage>
                     
                     const SizedBox(height: 20),
                     
-                    // Weather Icon and Temperature
+          
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -463,7 +463,7 @@ class _WeatherPageState extends State<WeatherPage>
                     
                     const SizedBox(height: 20),
                     
-                    // Weather Description
+                   
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
@@ -489,7 +489,7 @@ class _WeatherPageState extends State<WeatherPage>
               
               const SizedBox(height: 20),
               
-              // Additional Weather Info
+            
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(

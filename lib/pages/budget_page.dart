@@ -7,7 +7,9 @@ import '../pages/categoryexpenses_page.dart';
 import '../widgets/budget_bar_chart.dart';
 
 class BudgetPage extends StatefulWidget {
-  const BudgetPage({super.key});
+  final VoidCallback? onDataChanged;
+
+  const BudgetPage({super.key, this.onDataChanged});
 
   @override
   State<BudgetPage> createState() => _BudgetPageState();
@@ -56,6 +58,11 @@ class _BudgetPageState extends State<BudgetPage> {
     );
     await prefs.setString('categories', encodedCategories);
     await prefs.setString('expenses', encodedExpenses);
+
+    // עדכון דף הסיכום
+    if (widget.onDataChanged != null) {
+      widget.onDataChanged!();
+    }
   }
 
   double _sumExpensesForCategory(int categoryId) {

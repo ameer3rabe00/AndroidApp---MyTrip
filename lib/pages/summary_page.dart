@@ -9,10 +9,10 @@ class SummaryPage extends StatefulWidget {
   const SummaryPage({super.key});
 
   @override
-  State<SummaryPage> createState() => _SummaryPageState();
+  State<SummaryPage> createState() => SummaryPageState();
 }
 
-class _SummaryPageState extends State<SummaryPage>
+class SummaryPageState extends State<SummaryPage>
     with TickerProviderStateMixin {
   List<Activity> activities = [];
   List<Category> categories = [];
@@ -56,9 +56,12 @@ class _SummaryPageState extends State<SummaryPage>
     super.dispose();
   }
 
+  Future<void> refreshData() async {
+    await _loadData();
+  }
+
   Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
-
 
     String? activitiesData = prefs.getString('activities');
     if (activitiesData != null) {
@@ -66,13 +69,11 @@ class _SummaryPageState extends State<SummaryPage>
       activities = decoded.map((item) => Activity.fromJson(item)).toList();
     }
 
-
     String? categoriesData = prefs.getString('categories');
     if (categoriesData != null) {
       List<dynamic> decoded = jsonDecode(categoriesData);
       categories = decoded.map((item) => Category.fromJson(item)).toList();
     }
-
 
     String? expensesData = prefs.getString('expenses');
     if (expensesData != null) {
@@ -82,16 +83,15 @@ class _SummaryPageState extends State<SummaryPage>
 
     if (mounted) {
       setState(() {});
+      _animationController.reset();
       _animationController.forward();
     }
   }
-
 
   int get totalActivities => activities.length;
   int get completedActivities => activities.where((a) => a.isDone).length;
   double get activitiesCompletionRate =>
       totalActivities > 0 ? (completedActivities / totalActivities) * 100 : 0;
-
 
   double get totalPlannedBudget =>
       categories.fold(0.0, (sum, c) => sum + c.plannedBudget);
@@ -130,7 +130,6 @@ class _SummaryPageState extends State<SummaryPage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-             
                     Container(
                       padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 12 : 20),
                       child: Row(
@@ -181,7 +180,6 @@ class _SummaryPageState extends State<SummaryPage>
 
                     SizedBox(height: isSmallScreen ? 12 : 20),
 
-              
                     _buildSummaryCard(
                       title: 'סיכום פעילויות',
                       icon: Icons.event_note,
@@ -232,7 +230,6 @@ class _SummaryPageState extends State<SummaryPage>
 
                     SizedBox(height: isSmallScreen ? 12 : 20),
 
-             
                     _buildSummaryCard(
                       title: 'סיכום תקציב',
                       icon: Icons.account_balance_wallet,
@@ -334,7 +331,6 @@ class _SummaryPageState extends State<SummaryPage>
 
                     SizedBox(height: isSmallScreen ? 12 : 20),
 
- 
                     _buildQuickStatsGrid(isSmallScreen: isSmallScreen),
 
                     SizedBox(height: isSmallScreen ? 20 : 32),
@@ -440,7 +436,6 @@ class _SummaryPageState extends State<SummaryPage>
         height: circleSize,
         child: Stack(
           children: [
-
             Container(
               width: circleSize,
               height: circleSize,
@@ -449,7 +444,6 @@ class _SummaryPageState extends State<SummaryPage>
                 color: color.withOpacity(0.1),
               ),
             ),
-
             SizedBox(
               width: circleSize,
               height: circleSize,
@@ -460,7 +454,6 @@ class _SummaryPageState extends State<SummaryPage>
                 valueColor: AlwaysStoppedAnimation<Color>(color),
               ),
             ),
-
             if (extraRing)
               SizedBox(
                 width: circleSize,
@@ -472,7 +465,7 @@ class _SummaryPageState extends State<SummaryPage>
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.red.shade600),
                 ),
               ),
-
+            
             Center(child: centerWidget),
           ],
         ),
@@ -485,7 +478,6 @@ class _SummaryPageState extends State<SummaryPage>
     required List<StatData> stats,
   }) {
     if (isSmallScreen && stats.length > 2) {
-
       return Column(
         children: [
           Row(
@@ -506,7 +498,6 @@ class _SummaryPageState extends State<SummaryPage>
         ],
       );
     } else {
-
       return Row(
         children: stats.map((stat) =>
             Expanded(child: _buildStatItem(stat, isSmallScreen))
@@ -699,7 +690,6 @@ class _SummaryPageState extends State<SummaryPage>
     );
   }
 }
-
 
 class StatData {
   final String label;
