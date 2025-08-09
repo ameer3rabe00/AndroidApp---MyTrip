@@ -1,7 +1,6 @@
 name: andriod_app_mytrip
 description: "MyTripApp"
 publish_to: 'none'
-
 version: 1.0.0+1
 
 environment:
@@ -11,16 +10,17 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
-    sdk: flutter
-  cupertino_icons: ^1.0.8
+      sdk: flutter
   curved_navigation_bar: ^1.0.6
   shared_preferences: ^2.2.2
   intl: ^0.20.2
   fl_chart: ^0.66.1
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   flutter_lints: ^5.0.0
 
 flutter:

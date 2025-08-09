@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/category_model.dart';
 import '../models/expense_model.dart';
 import '../pages/categoryexpenses_page.dart';
+import '../widgets/budget_bar_chart.dart';
 
 class BudgetPage extends StatefulWidget {
   const BudgetPage({super.key});
@@ -255,74 +256,82 @@ class _BudgetPageState extends State<BudgetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("ניהול תקציב")),
-      body: ListView.builder(
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          final totalSpent = _sumExpensesForCategory(category.id);
-          final expenseCount = expenses.where((e) => e.categoryId == category.id).length;
+      body: ListView(
+        children: [
+          BudgetBarChart(categories: categories, expenses: expenses),
+          const SizedBox(height: 10),
+          ...List.generate(categories.length, (index) {
+            final category = categories[index];
+            final totalSpent = _sumExpensesForCategory(category.id);
+            final expenseCount = expenses.where((e) => e.categoryId == category.id).length;
 
-          return Card(
-            margin: const EdgeInsets.all(8),
-            child: ListTile(
-              onTap: () {
-                final categoryExpenses = expenses
-                    .where((e) => e.categoryId == category.id)
-                    .toList();
+            return Card(
+              margin: const EdgeInsets.all(8),
+              child: ListTile(
+                onTap: () {
+                  final categoryExpenses = expenses
+                      .where((e) => e.categoryId == category.id)
+                      .toList();
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CategoryExpensesPage(
-                      categoryName: category.name,
-                      expenses: categoryExpenses,
-                      onDelete: (expenseId) async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CategoryExpensesPage(
+                        categoryName: category.name,
+                        expenses: categoryExpenses,
+                        onDelete: (expenseId) async {
+                          setState(() {
+                            expenses.removeWhere((e) => e.id == expenseId);
+                          });
+                          Navigator.pop(context);
+                          await _saveData();
+                        },
+                      ),
+                    ),
+                  );
+                },
+                title: Text(category.name),
+                subtitle: Text(
+                  "מתוכנן: ₪${category.plannedBudget.toStringAsFixed(0)}"
+                      "\nהוצאות בפועל: ₪${totalSpent.toStringAsFixed(0)}"
+                      "\n📄 סה\"כ הוצאות: $expenseCount",
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () => _addExpense(category.id),
+                      tooltip: "הוסף הוצאה",
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      tooltip: "מחק קטגוריה",
+                      onPressed: () async {
                         setState(() {
-                          expenses.removeWhere((e) => e.id == expenseId);
+                          expenses.removeWhere((e) => e.categoryId == category.id);
+                          categories.removeAt(index);
                         });
-                        Navigator.pop(context);
                         await _saveData();
                       },
                     ),
-                  ),
-                );
-              },
-              title: Text(category.name),
-              subtitle: Text(
-                "מתוכנן: ₪${category.plannedBudget.toStringAsFixed(0)}"
-                    "\nהוצאות בפועל: ₪${totalSpent.toStringAsFixed(0)}"
-                    "\n📄 סה\"כ הוצאות: $expenseCount",
+                  ],
+                ),
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () => _addExpense(category.id),
-                    tooltip: "הוסף הוצאה",
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    tooltip: "מחק קטגוריה",
-                    onPressed: () async {
-                      setState(() {
-                        expenses.removeWhere((e) => e.categoryId == category.id);
-                        categories.removeAt(index);
-                      });
-                      await _saveData();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+            );
+          }),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addCategory,
-        tooltip: "הוסף קטגוריה",
-        child: const Icon(Icons.add),
+      floatingActionButton: SafeArea(
+        minimum: const EdgeInsets.only(bottom: 30),
+        child: FloatingActionButton(
+          heroTag: 'fab_budget',
+          onPressed: _addCategory,
+          backgroundColor: Colors.teal,
+          child: const Icon(Icons.add),
+        ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
