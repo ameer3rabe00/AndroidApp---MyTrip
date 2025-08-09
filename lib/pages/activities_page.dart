@@ -19,7 +19,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
     super.initState();
     _loadActivities();
   }
-
+  
   Future<void> _loadActivities() async {
     final prefs = await SharedPreferences.getInstance();
     String? data = prefs.getString('activities');
