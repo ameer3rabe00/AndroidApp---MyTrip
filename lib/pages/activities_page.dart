@@ -19,7 +19,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
     super.initState();
     _loadActivities();
   }
-  
+
   Future<void> _loadActivities() async {
     final prefs = await SharedPreferences.getInstance();
     String? data = prefs.getString('activities');
@@ -60,7 +60,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // שם פעילות
+              
                     TextField(
                       autofocus: true,
                       decoration: InputDecoration(
@@ -76,11 +76,10 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                     ),
                     const SizedBox(height: 12),
 
-                    // תיאור (אופציונלי) עם מגבלת תווים
                     TextField(
                       decoration: const InputDecoration(
                         labelText: "תיאור הפעילות (אופציונלי)",
-                        counterText: "", // מסתיר את המונה אם לא רוצים להציג
+                        counterText: "", 
                       ),
                       onChanged: (value) {
                         newDescription = value;
@@ -250,265 +249,288 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.teal.shade50, // Changed from blue to green background
-      body: activities.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.event_note,
-                    size: 64,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'אין פעילויות עדיין',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'לחץ על + להוספת פעילות חדשה',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : Container(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  // Header
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.teal.shade700,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
+      backgroundColor: Colors.teal.shade50,
+      body: SafeArea( 
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20.0), 
+          child: activities.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.event_note,
+                        size: 64,
+                        color: Colors.grey[400],
                       ),
-                    ),
-                    child: Row(
-                      children: const [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            "פעולות",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'אין פעילויות עדיין',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[600],
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            "שעה",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            "תאריך",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            "תיאור",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            "שם פעילות",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Activities List - FIXED: Removed the gap
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(12),
-                          bottomRight: Radius.circular(12),
-                        ),
-                        color: Colors.white, // Added white background to the container
                       ),
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero, // FIXED: Removed default ListView padding
-                        itemCount: activities.length,
-                        itemBuilder: (context, index) {
-                          var activity = activities[index];
-                          return InkWell(
-                            onTap: () => _viewActivityDetails(activity),
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: activity.isDone
-                                    ? Colors.green.shade50
-                                    : activity.isPast
-                                        ? Colors.red.shade50
-                                        : (index % 2 == 0
-                                            ? Colors.grey.shade50
-                                            : Colors.white),
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.grey.shade200,
-                                    width: 1,
-                                  ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'לחץ על + להוספת פעילות חדשה',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), 
+                  child: Column(
+                    children: [
+                     
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Text(
+                          'הפעילויות שלי',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal.shade700,
+                          ),
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 8), 
+                      
+                      // Header
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.teal.shade700,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                        ),
+                        child: Row(
+                          children: const [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "פעולות",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
-                              child: Row(
-                                children: [
-                                  // פעולות (צ'ק בוקס + מחיקה)
-                                  Expanded(
-                                    flex: 2,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        SizedBox(
-                                          width: 24,
-                                          height: 24,
-                                          child: Checkbox(
-                                            value: activity.isDone,
-                                            onChanged: (value) => _toggleDone(index, value),
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.shrinkWrap,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 24,
-                                          height: 24,
-                                          child: IconButton(
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            icon: Icon(
-                                              Icons.delete_outline,
-                                              color: Colors.red.shade600,
-                                              size: 18,
-                                            ),
-                                            onPressed: () => _deleteActivity(index),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // שעה
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      activity.formattedTime,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                  // תאריך
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      activity.formattedDate,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                  // תיאור
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      activity.description?.isEmpty ?? true
-                                          ? "-"
-                                          : activity.description!,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey.shade600,
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                "שעה",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "תאריך",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "תיאור",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                "שם פעילות",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(12),
+                              bottomRight: Radius.circular(12),
+                            ),
+                            color: Colors.white,
+                          ),
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: activities.length,
+                            itemBuilder: (context, index) {
+                              var activity = activities[index];
+                              return InkWell(
+                                onTap: () => _viewActivityDetails(activity),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: activity.isDone
+                                        ? Colors.green.shade50
+                                        : activity.isPast
+                                            ? Colors.red.shade50
+                                            : (index % 2 == 0
+                                                ? Colors.grey.shade50
+                                                : Colors.white),
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.shade200,
+                                        width: 1,
                                       ),
                                     ),
                                   ),
-                                  // שם פעילות
-                                  Expanded(
-                                    flex: 3,
-                                    child: Row(
-                                      children: [
-                                        if (activity.isPast && !activity.isDone) ...[
-                                          Tooltip(
-                                            message: "הפעילות כבר עברה",
-                                            child: Icon(
-                                              Icons.access_time,
-                                              size: 16,
-                                              color: Colors.red.shade600,
+                                  child: Row(
+                                    children: [
+                                      // פעולות (צ'ק בוקס + מחיקה)
+                                      Expanded(
+                                        flex: 2,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: Checkbox(
+                                                value: activity.isDone,
+                                                onChanged: (value) => _toggleDone(index, value),
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize.shrinkWrap,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(width: 4),
-                                        ],
-                                        Expanded(
-                                          child: Text(
-                                            activity.title,
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              decoration: activity.isDone
-                                                  ? TextDecoration.lineThrough
-                                                  : null,
-                                              color: activity.isDone
-                                                  ? Colors.grey
-                                                  : null,
+                                            SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: IconButton(
+                                                padding: EdgeInsets.zero,
+                                                constraints: const BoxConstraints(),
+                                                icon: Icon(
+                                                  Icons.delete_outline,
+                                                  color: Colors.red.shade600,
+                                                  size: 18,
+                                                ),
+                                                onPressed: () => _deleteActivity(index),
+                                              ),
                                             ),
+                                          ],
+                                        ),
+                                      ),
+                                      // שעה
+                                      Expanded(
+                                        flex: 1,
+                                        child: Text(
+                                          activity.formattedTime,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ),
+                                      // תאריך
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          activity.formattedDate,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ),
+                                      // תיאור
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          activity.description?.isEmpty ?? true
+                                              ? "-"
+                                              : activity.description!,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey.shade600,
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                  
+                                      Expanded(
+                                        flex: 3,
+                                        child: Row(
+                                          children: [
+                                            if (activity.isPast && !activity.isDone) ...[
+                                              Tooltip(
+                                                message: "הפעילות כבר עברה",
+                                                child: Icon(
+                                                  Icons.access_time,
+                                                  size: 16,
+                                                  color: Colors.red.shade600,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                            ],
+                                            Expanded(
+                                              child: Text(
+                                                activity.title,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  decoration: activity.isDone
+                                                      ? TextDecoration.lineThrough
+                                                      : null,
+                                                  color: activity.isDone
+                                                      ? Colors.grey
+                                                      : null,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                    ),
+                      
+                   
+                      const SizedBox(height: 16),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addActivity,
         backgroundColor: Colors.teal,

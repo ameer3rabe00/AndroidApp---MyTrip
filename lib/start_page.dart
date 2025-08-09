@@ -25,7 +25,7 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.teal, // CHANGED: From Color(0xFF02F2F6) to Colors.teal
+      color: Colors.teal, 
       child: SafeArea(
         top: false, left: false, right: false,
         child: Scaffold(
@@ -33,19 +33,19 @@ class _StartPageState extends State<StartPage> {
             index: _currentIndex,
             children: _pages,
           ),
-         // In your start_page.dart, update the CurvedNavigationBar items:
+        
 
 bottomNavigationBar: CurvedNavigationBar(
   color: Colors.teal,
   buttonBackgroundColor: Colors.teal,
   backgroundColor: Colors.transparent,
   onTap: (value) {
-    // You'll need to reverse the index mapping too
-    int reversedIndex = 3 - value; // Since you have 4 items (0,1,2,3), reverse them
+    
+    int reversedIndex = 3 - value; 
     setState(() => _currentIndex = reversedIndex);
   },
   items: [
-    // REVERSED ORDER: Summary -> Weather -> Budget -> Activities
+  
     Icon(_currentIndex == 3 ? Icons.pie_chart : Icons.pie_chart_outline_outlined, size: 30, color: Colors.white),
     Icon(_currentIndex == 2 ? Icons.cloud : Icons.cloud_outlined, size: 30, color: Colors.white),
     Icon(_currentIndex == 1 ? Icons.attach_money : Icons.attach_money_outlined, size: 30, color: Colors.white),
