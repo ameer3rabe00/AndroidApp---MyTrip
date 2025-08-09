@@ -17,7 +17,7 @@ class _SummaryPageState extends State<SummaryPage>
   List<Activity> activities = [];
   List<Category> categories = [];
   List<Expense> expenses = [];
-  
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -66,6 +66,7 @@ class _SummaryPageState extends State<SummaryPage>
       activities = decoded.map((item) => Activity.fromJson(item)).toList();
     }
 
+
     String? categoriesData = prefs.getString('categories');
     if (categoriesData != null) {
       List<dynamic> decoded = jsonDecode(categoriesData);
@@ -85,22 +86,27 @@ class _SummaryPageState extends State<SummaryPage>
     }
   }
 
+
   int get totalActivities => activities.length;
   int get completedActivities => activities.where((a) => a.isDone).length;
-  double get activitiesCompletionRate => 
+  double get activitiesCompletionRate =>
       totalActivities > 0 ? (completedActivities / totalActivities) * 100 : 0;
 
 
-  double get totalPlannedBudget => 
+  double get totalPlannedBudget =>
       categories.fold(0.0, (sum, c) => sum + c.plannedBudget);
-  double get totalActualExpenses => 
+  double get totalActualExpenses =>
       expenses.fold(0.0, (sum, e) => sum + e.amount);
-  double get budgetUsageRate => 
+  double get budgetUsageRate =>
       totalPlannedBudget > 0 ? (totalActualExpenses / totalPlannedBudget) * 100 : 0;
   double get budgetDifference => totalPlannedBudget - totalActualExpenses;
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final padding = isSmallScreen ? 12.0 : 20.0;
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -120,17 +126,17 @@ class _SummaryPageState extends State<SummaryPage>
             child: SlideTransition(
               position: _slideAnimation,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20.0),
+                padding: EdgeInsets.all(padding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-        
+             
                     Container(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 12 : 20),
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(12),
+                            padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
@@ -138,15 +144,15 @@ class _SummaryPageState extends State<SummaryPage>
                                   Colors.teal.shade600,
                                 ],
                               ),
-                              borderRadius: BorderRadius.circular(15),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.assessment,
                               color: Colors.white,
-                              size: 28,
+                              size: isSmallScreen ? 24 : 28,
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          SizedBox(width: isSmallScreen ? 12 : 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +160,7 @@ class _SummaryPageState extends State<SummaryPage>
                                 Text(
                                   'סיכום הטיול',
                                   style: TextStyle(
-                                    fontSize: 28,
+                                    fontSize: isSmallScreen ? 24 : 28,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.teal.shade700,
                                   ),
@@ -162,7 +168,7 @@ class _SummaryPageState extends State<SummaryPage>
                                 Text(
                                   'מבט כללי על התקדמות הטיול',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: isSmallScreen ? 12 : 14,
                                     color: Colors.grey.shade600,
                                   ),
                                 ),
@@ -173,25 +179,27 @@ class _SummaryPageState extends State<SummaryPage>
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: isSmallScreen ? 12 : 20),
 
-               
+              
                     _buildSummaryCard(
                       title: 'סיכום פעילויות',
                       icon: Icons.event_note,
                       gradient: [Colors.blue.shade400, Colors.blue.shade600],
+                      isSmallScreen: isSmallScreen,
                       child: Column(
                         children: [
                           _buildProgressCircle(
                             percentage: activitiesCompletionRate,
                             color: Colors.blue.shade600,
+                            isSmallScreen: isSmallScreen,
                             centerWidget: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
                                   '${activitiesCompletionRate.toStringAsFixed(0)}%',
                                   style: TextStyle(
-                                    fontSize: 24,
+                                    fontSize: isSmallScreen ? 20 : 24,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue.shade700,
                                   ),
@@ -199,77 +207,62 @@ class _SummaryPageState extends State<SummaryPage>
                                 Text(
                                   'הושלם',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: isSmallScreen ? 10 : 12,
                                     color: Colors.grey.shade600,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 24),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildStatItem(
-                                  'סה"כ פעילויות',
-                                  totalActivities.toString(),
-                                  Icons.list_alt,
-                                  Colors.blue.shade600,
-                                ),
-                              ),
-                              Expanded(
-                                child: _buildStatItem(
-                                  'הושלמו',
-                                  completedActivities.toString(),
-                                  Icons.check_circle,
-                                  Colors.green.shade600,
-                                ),
-                              ),
-                              Expanded(
-                                child: _buildStatItem(
-                                  'נותרו',
-                                  (totalActivities - completedActivities).toString(),
-                                  Icons.schedule,
-                                  Colors.orange.shade600,
-                                ),
-                              ),
+                          SizedBox(height: isSmallScreen ? 16 : 24),
+                          _buildStatsRow(
+                            isSmallScreen: isSmallScreen,
+                            stats: [
+                              StatData('סה"כ פעילויות', totalActivities.toString(),
+                                  Icons.list_alt, Colors.blue.shade600),
+                              StatData('הושלמו', completedActivities.toString(),
+                                  Icons.check_circle, Colors.green.shade600),
+                              StatData('נותרו', (totalActivities - completedActivities).toString(),
+                                  Icons.schedule, Colors.orange.shade600),
                             ],
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: isSmallScreen ? 12 : 20),
 
-              
+             
                     _buildSummaryCard(
                       title: 'סיכום תקציב',
                       icon: Icons.account_balance_wallet,
                       gradient: [Colors.teal.shade400, Colors.teal.shade600],
+                      isSmallScreen: isSmallScreen,
                       child: Column(
                         children: [
                           _buildProgressCircle(
                             percentage: budgetUsageRate > 100 ? 100 : budgetUsageRate,
-                            color: budgetUsageRate > 100 
-                                ? Colors.red.shade600 
+                            color: budgetUsageRate > 100
+                                ? Colors.red.shade600
                                 : Colors.teal.shade600,
+                            isSmallScreen: isSmallScreen,
                             centerWidget: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
                                   '${budgetUsageRate.toStringAsFixed(0)}%',
                                   style: TextStyle(
-                                    fontSize: 24,
+                                    fontSize: isSmallScreen ? 20 : 24,
                                     fontWeight: FontWeight.bold,
-                                    color: budgetUsageRate > 100 
-                                        ? Colors.red.shade700 
+                                    color: budgetUsageRate > 100
+                                        ? Colors.red.shade700
                                         : Colors.teal.shade700,
                                   ),
                                 ),
                                 Text(
                                   'ניצול',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: isSmallScreen ? 10 : 12,
                                     color: Colors.grey.shade600,
                                   ),
                                 ),
@@ -277,41 +270,30 @@ class _SummaryPageState extends State<SummaryPage>
                             ),
                             extraRing: budgetUsageRate > 100,
                           ),
-                          const SizedBox(height: 24),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildStatItem(
-                                  'תקציב מתוכנן',
-                                  '₪${totalPlannedBudget.toStringAsFixed(0)}',
-                                  Icons.savings,
-                                  Colors.blue.shade600,
-                                ),
-                              ),
-                              Expanded(
-                                child: _buildStatItem(
-                                  'הוצאות בפועל',
-                                  '₪${totalActualExpenses.toStringAsFixed(0)}',
-                                  Icons.money_off,
-                                  budgetUsageRate > 100 
-                                      ? Colors.red.shade600 
-                                      : Colors.orange.shade600,
-                                ),
-                              ),
+                          SizedBox(height: isSmallScreen ? 16 : 24),
+                          _buildStatsRow(
+                            isSmallScreen: isSmallScreen,
+                            stats: [
+                              StatData('תקציב מתוכנן', '₪${totalPlannedBudget.toStringAsFixed(0)}',
+                                  Icons.savings, Colors.blue.shade600),
+                              StatData('הוצאות בפועל', '₪${totalActualExpenses.toStringAsFixed(0)}',
+                                  Icons.money_off, budgetUsageRate > 100
+                                      ? Colors.red.shade600
+                                      : Colors.orange.shade600),
                             ],
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: isSmallScreen ? 12 : 16),
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                             decoration: BoxDecoration(
-                              color: budgetDifference >= 0 
-                                  ? Colors.green.shade50 
+                              color: budgetDifference >= 0
+                                  ? Colors.green.shade50
                                   : Colors.red.shade50,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: budgetDifference >= 0 
-                                    ? Colors.green.shade200 
+                                color: budgetDifference >= 0
+                                    ? Colors.green.shade200
                                     : Colors.red.shade200,
                               ),
                             ),
@@ -319,24 +301,28 @@ class _SummaryPageState extends State<SummaryPage>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  budgetDifference >= 0 
-                                      ? Icons.trending_up 
+                                  budgetDifference >= 0
+                                      ? Icons.trending_up
                                       : Icons.trending_down,
-                                  color: budgetDifference >= 0 
-                                      ? Colors.green.shade700 
+                                  color: budgetDifference >= 0
+                                      ? Colors.green.shade700
                                       : Colors.red.shade700,
+                                  size: isSmallScreen ? 18 : 24,
                                 ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  budgetDifference >= 0 
-                                      ? 'חסכת ₪${budgetDifference.toStringAsFixed(0)}'
-                                      : 'חריגה של ₪${(-budgetDifference).toStringAsFixed(0)}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: budgetDifference >= 0 
-                                        ? Colors.green.shade700 
-                                        : Colors.red.shade700,
+                                SizedBox(width: isSmallScreen ? 6 : 8),
+                                Flexible(
+                                  child: Text(
+                                    budgetDifference >= 0
+                                        ? 'חסכת ₪${budgetDifference.toStringAsFixed(0)}'
+                                        : 'חריגה של ₪${(-budgetDifference).toStringAsFixed(0)}',
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 14 : 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: budgetDifference >= 0
+                                          ? Colors.green.shade700
+                                          : Colors.red.shade700,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                               ],
@@ -346,12 +332,12 @@ class _SummaryPageState extends State<SummaryPage>
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: isSmallScreen ? 12 : 20),
 
-          
-                    _buildQuickStatsGrid(),
+ 
+                    _buildQuickStatsGrid(isSmallScreen: isSmallScreen),
 
-                    const SizedBox(height: 32),
+                    SizedBox(height: isSmallScreen ? 20 : 32),
                   ],
                 ),
               ),
@@ -367,14 +353,15 @@ class _SummaryPageState extends State<SummaryPage>
     required IconData icon,
     required List<Color> gradient,
     required Widget child,
+    required bool isSmallScreen,
   }) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
+            blurRadius: isSmallScreen ? 15 : 20,
             offset: const Offset(0, 8),
           ),
         ],
@@ -383,12 +370,12 @@ class _SummaryPageState extends State<SummaryPage>
         margin: EdgeInsets.zero,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
         ),
         child: Container(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -404,7 +391,7 @@ class _SummaryPageState extends State<SummaryPage>
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(colors: gradient),
                       borderRadius: BorderRadius.circular(12),
@@ -412,21 +399,23 @@ class _SummaryPageState extends State<SummaryPage>
                     child: Icon(
                       icon,
                       color: Colors.white,
-                      size: 24,
+                      size: isSmallScreen ? 20 : 24,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                  SizedBox(width: isSmallScreen ? 12 : 16),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 18 : 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: isSmallScreen ? 16 : 24),
               child,
             ],
           ),
@@ -439,47 +428,51 @@ class _SummaryPageState extends State<SummaryPage>
     required double percentage,
     required Color color,
     required Widget centerWidget,
+    required bool isSmallScreen,
     bool extraRing = false,
   }) {
+    final circleSize = isSmallScreen ? 100.0 : 140.0;
+    final strokeWidth = isSmallScreen ? 6.0 : 8.0;
+
     return Center(
       child: SizedBox(
-        width: 140,
-        height: 140,
+        width: circleSize,
+        height: circleSize,
         child: Stack(
           children: [
- 
+
             Container(
-              width: 140,
-              height: 140,
+              width: circleSize,
+              height: circleSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: color.withOpacity(0.1),
               ),
             ),
-    
+
             SizedBox(
-              width: 140,
-              height: 140,
+              width: circleSize,
+              height: circleSize,
               child: CircularProgressIndicator(
                 value: percentage / 100,
-                strokeWidth: 8,
+                strokeWidth: strokeWidth,
                 backgroundColor: color.withOpacity(0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
               ),
             ),
-        
+
             if (extraRing)
               SizedBox(
-                width: 140,
-                height: 140,
+                width: circleSize,
+                height: circleSize,
                 child: CircularProgressIndicator(
                   value: (percentage - 100) / 100,
-                  strokeWidth: 4,
+                  strokeWidth: strokeWidth * 0.5,
                   backgroundColor: Colors.transparent,
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.red.shade600),
                 ),
               ),
-      
+
             Center(child: centerWidget),
           ],
         ),
@@ -487,32 +480,70 @@ class _SummaryPageState extends State<SummaryPage>
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon, Color color) {
+  Widget _buildStatsRow({
+    required bool isSmallScreen,
+    required List<StatData> stats,
+  }) {
+    if (isSmallScreen && stats.length > 2) {
+
+      return Column(
+        children: [
+          Row(
+            children: stats.take(2).map((stat) =>
+                Expanded(child: _buildStatItem(stat, isSmallScreen))
+            ).toList(),
+          ),
+          if (stats.length > 2) ...[
+            SizedBox(height: isSmallScreen ? 8 : 12),
+            Row(
+              children: [
+                Expanded(flex: 1, child: Container()),
+                Expanded(flex: 2, child: _buildStatItem(stats[2], isSmallScreen)),
+                Expanded(flex: 1, child: Container()),
+              ],
+            ),
+          ],
+        ],
+      );
+    } else {
+
+      return Row(
+        children: stats.map((stat) =>
+            Expanded(child: _buildStatItem(stat, isSmallScreen))
+        ).toList(),
+      );
+    }
+  }
+
+  Widget _buildStatItem(StatData stat, bool isSmallScreen) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+      margin: EdgeInsets.symmetric(horizontal: isSmallScreen ? 2 : 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: stat.color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: stat.color.withOpacity(0.2)),
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: color,
+          Icon(stat.icon, color: stat.color, size: isSmallScreen ? 20 : 24),
+          SizedBox(height: isSmallScreen ? 6 : 8),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              stat.value,
+              style: TextStyle(
+                fontSize: isSmallScreen ? 16 : 18,
+                fontWeight: FontWeight.bold,
+                color: stat.color,
+              ),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: isSmallScreen ? 2 : 4),
           Text(
-            label,
+            stat.label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: isSmallScreen ? 9 : 11,
               color: Colors.grey.shade600,
             ),
             textAlign: TextAlign.center,
@@ -523,7 +554,7 @@ class _SummaryPageState extends State<SummaryPage>
     );
   }
 
-  Widget _buildQuickStatsGrid() {
+  Widget _buildQuickStatsGrid({required bool isSmallScreen}) {
     final upcomingActivities = activities
         .where((a) => !a.isDone && !a.isPast)
         .length;
@@ -537,43 +568,47 @@ class _SummaryPageState extends State<SummaryPage>
         Text(
           'סטטיסטיקות מהירות',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: isSmallScreen ? 18 : 20,
             fontWeight: FontWeight.bold,
             color: Colors.teal.shade700,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: isSmallScreen ? 12 : 16),
         GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          childAspectRatio: 1.2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
+          childAspectRatio: isSmallScreen ? 0.85 : 1.0,
+          crossAxisSpacing: isSmallScreen ? 8 : 12,
+          mainAxisSpacing: isSmallScreen ? 8 : 12,
           children: [
             _buildQuickStatCard(
               'פעילויות קרובות',
               upcomingActivities.toString(),
               Icons.upcoming,
               Colors.blue.shade600,
+              isSmallScreen,
             ),
             _buildQuickStatCard(
               'פעילויות שפג זמנן',
               overdueActivities.toString(),
               Icons.schedule_outlined,
               Colors.red.shade600,
+              isSmallScreen,
             ),
             _buildQuickStatCard(
               'קטגוריות תקציב',
               categories.length.toString(),
               Icons.category,
               Colors.purple.shade600,
+              isSmallScreen,
             ),
             _buildQuickStatCard(
               'סה"כ הוצאות',
               expenses.length.toString(),
               Icons.receipt_long,
               Colors.orange.shade600,
+              isSmallScreen,
             ),
           ],
         ),
@@ -582,18 +617,19 @@ class _SummaryPageState extends State<SummaryPage>
   }
 
   Widget _buildQuickStatCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+      String title,
+      String value,
+      IconData icon,
+      Color color,
+      bool isSmallScreen,
+      ) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
+            blurRadius: isSmallScreen ? 8 : 10,
             offset: const Offset(0, 4),
           ),
         ],
@@ -602,12 +638,12 @@ class _SummaryPageState extends State<SummaryPage>
         margin: EdgeInsets.zero,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
         ),
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -621,36 +657,40 @@ class _SummaryPageState extends State<SummaryPage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   icon,
                   color: color,
-                  size: 28,
+                  size: isSmallScreen ? 22 : 28,
                 ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: color,
+              SizedBox(height: isSmallScreen ? 8 : 12),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 20 : 24,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: isSmallScreen ? 2 : 4),
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: isSmallScreen ? 10 : 12,
                   color: Colors.grey.shade600,
                   fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -658,4 +698,14 @@ class _SummaryPageState extends State<SummaryPage>
       ),
     );
   }
+}
+
+
+class StatData {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  StatData(this.label, this.value, this.icon, this.color);
 }
