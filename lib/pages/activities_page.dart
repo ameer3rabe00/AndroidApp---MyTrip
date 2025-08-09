@@ -87,7 +87,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                     ),
                     const SizedBox(height: 16),
 
-                    // בחירת תאריך
+                
                     TextField(
                       readOnly: true,
                       decoration: InputDecoration(
@@ -117,7 +117,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                     ),
                     const SizedBox(height: 12),
 
-                    // בחירת שעה
+                 
                     TextField(
                       readOnly: true,
                       decoration: InputDecoration(
@@ -283,10 +283,10 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                   ),
                 )
               : Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), 
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Column(
                     children: [
-                     
+                      // App Title
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Text(
@@ -301,7 +301,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                       
                       const SizedBox(height: 8), 
                       
-                      // Header
+                    
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -314,9 +314,33 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                         child: Row(
                           children: const [
                             Expanded(
+                              flex: 3,
+                              child: Text(
+                                "שם פעילות",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
                               flex: 2,
                               child: Text(
-                                "פעולות",
+                                "תיאור",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "תאריך",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -340,31 +364,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                             Expanded(
                               flex: 2,
                               child: Text(
-                                "תאריך",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                "תיאור",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                "שם פעילות",
+                                "פעולות",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -376,7 +376,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                           ],
                         ),
                       ),
-                    
+                  
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
@@ -413,74 +413,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                                   ),
                                   child: Row(
                                     children: [
-                                      // פעולות (צ'ק בוקס + מחיקה)
-                                      Expanded(
-                                        flex: 2,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            SizedBox(
-                                              width: 24,
-                                              height: 24,
-                                              child: Checkbox(
-                                                value: activity.isDone,
-                                                onChanged: (value) => _toggleDone(index, value),
-                                                materialTapTargetSize:
-                                                    MaterialTapTargetSize.shrinkWrap,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 24,
-                                              height: 24,
-                                              child: IconButton(
-                                                padding: EdgeInsets.zero,
-                                                constraints: const BoxConstraints(),
-                                                icon: Icon(
-                                                  Icons.delete_outline,
-                                                  color: Colors.red.shade600,
-                                                  size: 18,
-                                                ),
-                                                onPressed: () => _deleteActivity(index),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      // שעה
-                                      Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          activity.formattedTime,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
-                                      ),
-                                      // תאריך
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          activity.formattedDate,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
-                                      ),
-                                      // תיאור
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          activity.description?.isEmpty ?? true
-                                              ? "-"
-                                              : activity.description!,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ),
-                                  
+                                      // שם פעילות
                                       Expanded(
                                         flex: 3,
                                         child: Row(
@@ -515,6 +448,73 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                                           ],
                                         ),
                                       ),
+                                      // תיאור
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          activity.description?.isEmpty ?? true
+                                              ? "-"
+                                              : activity.description!,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ),
+                                      // תאריך
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          activity.formattedDate,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ),
+                                      // שעה
+                                      Expanded(
+                                        flex: 1,
+                                        child: Text(
+                                          activity.formattedTime,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ),
+                                     
+                                      Expanded(
+                                        flex: 2,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: Checkbox(
+                                                value: activity.isDone,
+                                                onChanged: (value) => _toggleDone(index, value),
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize.shrinkWrap,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: IconButton(
+                                                padding: EdgeInsets.zero,
+                                                constraints: const BoxConstraints(),
+                                                icon: Icon(
+                                                  Icons.delete_outline,
+                                                  color: Colors.red.shade600,
+                                                  size: 18,
+                                                ),
+                                                onPressed: () => _deleteActivity(index),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -524,7 +524,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                         ),
                       ),
                       
-                   
+                
                       const SizedBox(height: 16),
                     ],
                   ),
