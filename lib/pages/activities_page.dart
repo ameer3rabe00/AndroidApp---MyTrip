@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/activity_model.dart';
+import 'activity_details_page.dart';
 
 class ActivitiesPage extends StatefulWidget {
   const ActivitiesPage({super.key});
@@ -19,7 +20,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
     _loadActivities();
   }
 
-Future<void> _loadActivities() async {
+  Future<void> _loadActivities() async {
     final prefs = await SharedPreferences.getInstance();
     String? data = prefs.getString('activities');
     if (data != null) {
@@ -28,17 +29,15 @@ Future<void> _loadActivities() async {
         activities = decoded.map((item) => Activity.fromJson(item)).toList();
       });
     }
-}
+  }
 
-Future<void> _saveActivities() async {
+  Future<void> _saveActivities() async {
     final prefs = await SharedPreferences.getInstance();
     String encoded = jsonEncode(
       activities.map((activity) => activity.toJson()).toList(),
     );
     await prefs.setString('activities', encoded);
-}
-
-
+  }
 
   void _addActivity() {
     String newTitle = "";
@@ -79,7 +78,6 @@ Future<void> _saveActivities() async {
 
                     // תיאור (אופציונלי) עם מגבלת תווים
                     TextField(
-                      
                       decoration: const InputDecoration(
                         labelText: "תיאור הפעילות (אופציונלי)",
                         counterText: "", // מסתיר את המונה אם לא רוצים להציג
@@ -200,10 +198,29 @@ Future<void> _saveActivities() async {
   }
 
   void _deleteActivity(int index) {
-    setState(() {
-      activities.removeAt(index);
-    });
-    _saveActivities();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("מחיקת פעילות"),
+        content: const Text("האם אתה בטוח שברצונך למחוק את הפעילות?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("ביטול"),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                activities.removeAt(index);
+              });
+              _saveActivities();
+              Navigator.pop(context);
+            },
+            child: const Text("מחק", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
   }
 
   void _sortActivities() {
@@ -221,118 +238,278 @@ Future<void> _saveActivities() async {
     });
   }
 
+  void _viewActivityDetails(Activity activity) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ActivityDetailsPage(activity: activity),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: activities.isEmpty
-          ? const Center(child: Text('אין פעילויות עדיין'))
-          : SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: MediaQuery.of(context).size.width,
-          ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: DataTable(
-              headingRowColor:
-              WidgetStateProperty.all(Colors.teal.shade700),
-              headingTextStyle: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-             
-              dataRowMinHeight: 48,
-              dataRowMaxHeight: 56,
-              columnSpacing: 17,
-              columns: const [
-                DataColumn(label: FittedBox(child: Text("בוצע"))),
-                DataColumn(label: FittedBox(child: Text("שם פעילות"))),
-                DataColumn(label: FittedBox(child: Text("תיאור"))),
-                DataColumn(label: FittedBox(child: Text("תאריך"))),
-                DataColumn(label: FittedBox(child: Text("שעה"))),
-                DataColumn(label: FittedBox(child: Text("מחיקה"))),
-              ],
-              rows: activities.asMap().entries.map((entry) {
-                int index = entry.key;
-                var activity = entry.value;
-
-                return DataRow(
-                  color: WidgetStateProperty.all(
-                    activity.isDone
-                        ? Colors.green.shade50
-                        : activity.isPast
-                        ? Colors.red.shade50
-                        : (index % 2 == 0
-                        ? Colors.grey.shade100
-                        : Colors.white),
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.event_note,
+                    size: 64,
+                    color: Colors.grey[400],
                   ),
-                  cells: [
-                    // בוצע
-                    DataCell(
-                      Checkbox(
-                        value: activity.isDone,
-                        onChanged: (value) => _toggleDone(index, value),
+                  const SizedBox(height: 16),
+                  Text(
+                    'אין פעילויות עדיין',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'לחץ על + להוספת פעילות חדשה',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.teal.shade700,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
                       ),
                     ),
-                    // שם פעילות
-                    DataCell(
-                      SizedBox(
-                        
-                        child: Row(
-                          children: [
-                            if (activity.isPast && !activity.isDone) ...[
-                              Tooltip(
-                                message: "הפעילות כבר עברה",
-                                child: const Icon(Icons.access_time, size: 16, color: Colors.red),
+                    child: Row(
+                      children: const [
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "פעולות",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            "שעה",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "תאריך",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "תיאור",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            "שם פעילות",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Activities List
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: ListView.builder(
+                        itemCount: activities.length,
+                        itemBuilder: (context, index) {
+                          var activity = activities[index];
+                          return InkWell(
+                            onTap: () => _viewActivityDetails(activity),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: activity.isDone
+                                    ? Colors.green.shade50
+                                    : activity.isPast
+                                        ? Colors.red.shade50
+                                        : (index % 2 == 0
+                                            ? Colors.grey.shade50
+                                            : Colors.white),
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.grey.shade200,
+                                    width: 1,
+                                  ),
+                                ),
                               ),
-                              const SizedBox(width: 4),
-                            ],
-                            Expanded(
-                              child: Text(
-                                activity.title,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
+                              child: Row(
+                                children: [
+                                  // פעולות (צ'ק בוקס + מחיקה)
+                                  Expanded(
+                                    flex: 2,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        SizedBox(
+                                          width: 24,
+                                          height: 24,
+                                          child: Checkbox(
+                                            value: activity.isDone,
+                                            onChanged: (value) => _toggleDone(index, value),
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize.shrinkWrap,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 24,
+                                          height: 24,
+                                          child: IconButton(
+                                            padding: EdgeInsets.zero,
+                                            constraints: const BoxConstraints(),
+                                            icon: Icon(
+                                              Icons.delete_outline,
+                                              color: Colors.red.shade600,
+                                              size: 18,
+                                            ),
+                                            onPressed: () => _deleteActivity(index),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // שעה
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      activity.formattedTime,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                  // תאריך
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      activity.formattedDate,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                  // תיאור
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      activity.description?.isEmpty ?? true
+                                          ? "-"
+                                          : activity.description!,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ),
+                                  // שם פעילות
+                                  Expanded(
+                                    flex: 3,
+                                    child: Row(
+                                      children: [
+                                        if (activity.isPast && !activity.isDone) ...[
+                                          Tooltip(
+                                            message: "הפעילות כבר עברה",
+                                            child: Icon(
+                                              Icons.access_time,
+                                              size: 16,
+                                              color: Colors.red.shade600,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                        ],
+                                        Expanded(
+                                          child: Text(
+                                            activity.title,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              decoration: activity.isDone
+                                                  ? TextDecoration.lineThrough
+                                                  : null,
+                                              color: activity.isDone
+                                                  ? Colors.grey
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                     ),
-                    // תיאור
-                    DataCell(
-                      SizedBox(
-                        
-                        child: Text(
-                          activity.description ?? "",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          softWrap: true,
-                        ),
-                      ),
-                    ),
-                    // תאריך
-                    DataCell(Text(activity.formattedDate)),
-                    // שעה
-                    DataCell(Text(activity.formattedTime)),
-                    // מחיקה
-                    DataCell(
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _deleteActivity(index),
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addActivity,
         backgroundColor: Colors.teal,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

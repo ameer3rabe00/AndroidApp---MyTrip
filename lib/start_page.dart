@@ -5,7 +5,6 @@ import 'pages/budget_page.dart';
 import 'pages/weather_page.dart';
 import 'pages/summary_page.dart';
 
-
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
 
@@ -16,7 +15,7 @@ class StartPage extends StatefulWidget {
 class _StartPageState extends State<StartPage> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
+  final List<Widget> _pages = const [
     ActivitiesPage(),
     BudgetPage(),
     WeatherPage(),
@@ -26,44 +25,25 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFF02F2F6),
+      color: const Color(0xFF02F2F6),
       child: SafeArea(
-        top: false,
-        left: false,
-        right: false,
+        top: false, left: false, right: false,
         child: Scaffold(
-          body: _pages[_currentIndex],
+          body: IndexedStack(
+            index: _currentIndex,
+            children: _pages,
+          ),
           bottomNavigationBar: CurvedNavigationBar(
             color: Colors.teal,
             buttonBackgroundColor: Colors.teal,
             backgroundColor: Colors.transparent,
-            onTap: (value) {
-              setState(() {
-                _currentIndex = value;
-              });
-            },
-              items: [
-                Icon(
-                  _currentIndex == 0 ? Icons.event : Icons.event_outlined,
-                    size: 30,
-                    color: Colors.white,
-                ),
-                Icon(
-                  _currentIndex == 0 ? Icons.attach_money : Icons.attach_money_outlined,
-                  size: 30,
-                  color: Colors.white,
-                ),
-                Icon(
-                  _currentIndex == 0 ? Icons.cloud : Icons.cloud_outlined,
-                  size: 30,
-                  color: Colors.white,
-                ),
-                Icon(
-                  _currentIndex == 0 ? Icons.pie_chart : Icons.pie_chart,
-                  size: 30,
-                  color: Colors.white,
-                ),
-              ],
+            onTap: (value) => setState(() => _currentIndex = value),
+            items: [
+              Icon(_currentIndex == 0 ? Icons.event : Icons.event_outlined, size: 30, color: Colors.white),
+              Icon(_currentIndex == 1 ? Icons.attach_money : Icons.attach_money_outlined, size: 30, color: Colors.white),
+              Icon(_currentIndex == 2 ? Icons.cloud : Icons.cloud_outlined, size: 30, color: Colors.white),
+              Icon(_currentIndex == 3 ? Icons.pie_chart : Icons.pie_chart_outline_outlined, size: 30, color: Colors.white),
+            ],
           ),
         ),
       ),
